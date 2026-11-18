@@ -153,6 +153,28 @@ def main():
         return [round(v / pop * 100000, 2) if v is not None and pop else None
                 for v in arr(ik, st)]
 
+    def peak_stats(ik, st):
+        # Peak of the 12-month-ending series and where it stands now (last period).
+        s = arr(ik, st)
+        vals = [(v, i) for i, v in enumerate(s) if v is not None]
+        if not vals:
+            return None
+        pk, pi = max(vals, key=lambda t: (t[0], -t[1]))  # earliest month on ties
+        now = s[-1] if s[-1] is not None else vals[-1][0]
+        pop = POP.get(st)
+        return {
+            "peakIdx": pi, "peak": pk, "now": now,
+            "pctChange": round((now - pk) / pk * 100, 1),
+            "ratePeak": round(pk / pop * 100000, 1) if pop else None,
+            "rateNow": round(now / pop * 100000, 1) if pop else None,
+        }
+
+    def indexed(ik, st):
+        # Series as a percent of its own peak (peak = 100), for comparing drugs.
+        s = arr(ik, st)
+        pk = max((v for v in s if v is not None), default=None)
+        return [round(v / pk * 100, 1) if v is not None and pk else None for v in s]
+
     out = {
         "periods": [f"{y}-{m:02d}" for y, m in periods],
         "periodLabels": [f"12-mo ending {mn[m]} {y}" for y, m in periods],
@@ -162,6 +184,11 @@ def main():
         "national": {ik: arr(ik, NATIONAL) for ik in LABELS},
         "rate": {ik: {st: arr_rate(ik, st) for st in states} for ik in LABELS},
         "nationalRate": {ik: arr_rate(ik, NATIONAL) for ik in LABELS},
+        # peak/decline stats per state (all-drug total) and for the U.S. per drug
+        "statePeak": {st: peak_stats("total", st) for st in states
+                      if st != "Puerto Rico"},  # proposal covers 50 states + D.C.
+        "nationalPeak": {ik: peak_stats(ik, NATIONAL) for ik in LABELS},
+        "nationalIndexed": {ik: indexed(ik, NATIONAL) for ik in LABELS},
     }
     json.dump(out, open(OUT, "w"))
     print(f"wrote {OUT}: {len(periods)} periods, {len(states)} states, "
