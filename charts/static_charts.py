@@ -106,11 +106,16 @@ def chart2():
            "death can involve\nmore than one drug and then counts under each, so the lines "
            "can't be added together.")
     ax = fig.add_axes([0.10, 0.14, 0.52, 0.62])
-    for k, name, c in spec:
+    ends = sorted((D["nationalIndexed"][k][-1], i) for i, (k, _, _) in enumerate(spec))
+    ypos, prev = {}, -99
+    for y, i in ends:  # keep end labels at least 5 points apart
+        prev = ypos[i] = max(y, prev + 5)
+    for i, (k, name, c) in enumerate(spec):
         y = D["nationalIndexed"][k]
         ax.plot(X, y, color=c, lw=3 if k == "total" else 2)
         pct = rnd(D["nationalPeak"][k]["pctChange"])
-        ax.text(X[-1] + 0.15, y[-1], f"{name} {pct}%".replace("-", "−"), color=c,
+        ax.plot([X[-1], X[-1] + 0.12], [y[-1], ypos[i]], color=c, lw=0.8)
+        ax.text(X[-1] + 0.15, ypos[i], f"{name} {pct}%".replace("-", "−"), color=c,
                 fontsize=9, fontweight="bold", va="center")
     hp = D["nationalPeak"]["heroin"]["peakIdx"]
     ax.scatter([X[hp]], [100], color=BLUE, s=25, zorder=5)
