@@ -1,0 +1,4 @@
+# Large source data (~17 MB): rebuilt by data/build_data.py from the CDC API
+data/raw_data.csv
+__pycache__/
+.DS_Store
