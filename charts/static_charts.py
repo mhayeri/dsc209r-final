@@ -51,13 +51,15 @@ def chart1():
     s = D["national"]["total"]
     pk = D["nationalPeak"]["total"]
     pi, now = pk["peakIdx"], pk["now"]
+    # titles below name these literally; fail loudly if a data refresh changes them
+    assert P[-1] == "2026-05" and P[pi] == "2023-06", (P[-1], P[pi])
     # first month whose 12-month total is within 0.5% of today's, for the "back to" line
     back = next(i for i, v in enumerate(s) if v and abs(v - now) / now < 0.005)
     fig = plt.figure(figsize=(9, 5.6))
     header(fig, f"U.S. overdose deaths have fallen {abs(rnd(pk['pctChange']))}% since mid-2023",
            "Drug overdose deaths in the 12 months ending each month, January 2015 to "
-           f"May 2026. After the peak in the\nyear ending {label(pi)}, the total fell for "
-           f"{len(P) - 1 - pi} months in a row and is back to about where it was in "
+           f"May 2026. After the peak in the\nyear ending {label(pi)}, the total fell "
+           f"over the next {len(P) - 1 - pi} months and is back to about where it was in "
            f"early {P[back][:4]}.")
     ax = fig.add_axes([0.11, 0.14, 0.72, 0.62])
     ax.plot(X[: pi + 1], s[: pi + 1], color=GRAY, lw=2)
@@ -176,11 +178,15 @@ def chart3():
     shade = lambda v: cmap(0.05 + 0.85 * (norm(v)))  # keep the lightest tile off pure white
     fig = plt.figure(figsize=(9, 6.4))
     low = min(pct, key=pct.get)
+    assert low == "OR" and at_peak == ["NM"], (low, at_peak)  # named in the title
+    pk_idx = [v["peakIdx"] for v in sp.values()]
+    span = f"{P[min(pk_idx)][:4]} to {P[max(pk_idx)][:4]}"
     header(fig, f"Oregon is down {abs(rnd(pct[low]))}% from its peak; New Mexico is at a new high",
            "Change in each state's 12-month overdose deaths, from its own peak month to the "
            f"year ending May 2026.\n{further} of the 50 states and D.C. fell further than the "
            f"U.S. did ({rnd(us)}%). New Mexico (outlined) is at its\nhighest 12-month total "
-           "in the data.".replace("(-", "(−"))
+           f"in the data. States peaked at different times, from {span}, "
+           "so the windows differ.".replace("(-", "(−"))
     ax = fig.add_axes([0.04, 0.1, 0.72, 0.72])
     for a, (r, c) in TILES.items():
         v = pct[a]

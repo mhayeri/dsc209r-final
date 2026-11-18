@@ -160,11 +160,12 @@ def main():
         if not vals:
             return None
         pk, pi = max(vals, key=lambda t: (t[0], -t[1]))  # earliest month on ties
-        now = s[-1] if s[-1] is not None else vals[-1][0]
+        assert s[-1] is not None and pk > 0, f"{ik}/{st}: missing latest month or zero peak"
+        now = s[-1]
         pop = POP.get(st)
         return {
             "peakIdx": pi, "peak": pk, "now": now,
-            "pctChange": round((now - pk) / pk * 100, 1),
+            "pctChange": round((now - pk) / pk * 100, 3),  # charts round this once, to whole %
             "ratePeak": round(pk / pop * 100000, 1) if pop else None,
             "rateNow": round(now / pop * 100000, 1) if pop else None,
         }
