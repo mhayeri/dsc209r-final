@@ -40,9 +40,14 @@
           <svg id="chart-national" viewBox="0 0 900 420" aria-label="U.S. 12-month overdose deaths, 2015-2026"></svg>
           <figcaption>12-month-ending total overdose deaths, United States, Jan 2015 to May 2026.</figcaption>
         </figure>
-        <p class="note todo"><span class="who">Moose - annotation to finalize</span>
-          Draft: name the policy/drug-supply context for the 2023 turn here, and
-          whether the newest provisional months are likely to revise up.</p>
+        <p class="note">
+          The turn lines up with wider naloxone access (the FDA cleared
+          over-the-counter Narcan in March 2023), expanded treatment, and shifts
+          in the illicit fentanyl supply, but no single cause has been pinned
+          down. The newest months are provisional and will likely revise up a
+          little: for the year ending May 2026 the CDC's own adjusted estimate is
+          66,478 deaths against 65,351 reported (about 1.7% higher). That is still
+          a drop of about 40% from the peak.</p>
       </section>
 
       <!-- Act 2: drugs indexed to own peak (matches static chart 2) -->
@@ -93,9 +98,15 @@
             <p class="focus-readout" id="focus-readout"></p>
           </div>
         </div>
-        <p class="note todo"><span class="who">Moose - data note to finalize</span>
-          Draft: states peaked years apart, so each state's "change from peak"
-          uses a different window. Confirm the per-100k denominator wording.</p>
+        <p class="note">
+          Data note: "change from peak" compares each state's latest 12-month
+          total (year ending May 2026) with its own highest 12-month total, and
+          states peaked years apart. Pennsylvania peaked in 2017 and Arizona in
+          late 2025, so some states have had years to fall while others have had
+          only months. Rates are deaths per 100,000 residents, using each state's
+          April 2020 Census population as a fixed denominator for every month, so
+          a change in a state's rate tracks the change in its deaths, not in its
+          population. New York includes New York City.</p>
       </section>
 
       <!-- Act 4: slope chart (Derek, rough) -->
@@ -163,7 +174,13 @@
           out how far it has come down from its own peak. Every number on the page
           is pulled live from data.json, so the charts stay correct when the CDC
           data is refreshed, and the original Project 3 explorer still lives at
-          explorer.html for reference.
+          explorer.html for reference. Mustafa's three static charts from the
+          proposal (the national trend, the drugs indexed to their own peaks, and
+          the change-from-peak map) are now rebuilt in D3 as the first three
+          charts here. We also checked the newest provisional months against the
+          CDC's predicted counts: for the year ending May 2026 the predicted total
+          is about 1.7% higher than the reported one, so the roughly 40% drop
+          holds up even if the latest months revise upward.
         </p>
 
         <h3>What will be hardest to design, and why</h3>
@@ -183,7 +200,13 @@
           Rhode Island, Delaware) nearly disappear on a geographic map, so we may
           move to Mustafa's tile-grid version, and we still have to write tight
           per-step annotations that explain each turn without burying the charts
-          in text.
+          in text. Provisional data is its own design problem, because the CDC
+          keeps revising the latest months upward and we need a way to mark which
+          part of the line may still change without making readers distrust the
+          whole chart. Peak timing causes trouble on the map too: a state that
+          peaked in 2017 and one that peaked in late 2025 can show the same
+          percent drop for very different reasons, and we have not settled whether
+          to show the peak date on the map itself or leave it to the timing chart.
         </p>
       </section>
 
