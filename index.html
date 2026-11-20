@@ -3,74 +3,206 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>U.S. Drug Overdose Deaths - Interactive Explorer</title>
-    <link rel="stylesheet" href="style.css" />
+    <title>After the Peak: The Uneven Drop in U.S. Overdose Deaths</title>
+    <link rel="stylesheet" href="story.css" />
   </head>
   <body>
-    <header>
-      <h1>The Shifting Geography and Drugs of the U.S. Overdose Crisis</h1>
-      <p class="subtitle">
-        CDC VSRR Provisional Drug Overdose Death Counts - 12-month-ending totals
-        by state, 2015-2026. Drag the slider through time, switch the drug
-        category, and click a state to trace its trajectory.
+    <header class="page-head">
+      <p class="kicker">DSC 209R Final Project &middot; Prototype</p>
+      <h1>After the Peak</h1>
+      <p class="lede">
+        U.S. overdose deaths fell about 41% from their mid-2023 peak - the
+        sharpest decline in the data. But the drop is uneven: some states are
+        down two-thirds from their peak, while New Mexico has not peaked yet.
+        This page traces where deaths fell, how fast, by which drug, and who
+        got left out.
       </p>
-      <p class="data-note">
-        Data notes: each value is the number of overdose deaths in the 12
-        months ending in the selected month. The CDC reports New York City
-        separately, so we added its deaths into New York. Fentanyl and heroin
-        deaths are also part of the opioid count, and a death involving more
-        than one drug counts in every category that applies, so the
-        categories don't add up to the total. Light gray states have no
-        reported value for that month. Rates are deaths per 100,000
-        residents, using each state's April 1, 2020 Census population for
-        every year.
+      <p class="byline">
+        Datapulse &middot; Derek Pham and Mustafa Hayeri &middot; Data: CDC NCHS,
+        VSRR Provisional Drug Overdose Death Counts
+        <span class="prototype-tag">rough prototype</span>
       </p>
     </header>
 
     <main>
-      <section class="controls">
-        <label for="indicator">Drug category
-          <select id="indicator"></select>
-        </label>
-        <label for="metric">Measure
-          <select id="metric">
-            <option value="counts">Counts</option>
-            <option value="rate">Per 100k residents</option>
-          </select>
-        </label>
-        <label for="period" class="slider-label">
-          <span id="period-label"></span>
-          <input type="range" id="period" min="0" value="0" step="1" />
-        </label>
+      <!-- Act 1: national trend (matches static chart 1) -->
+      <section class="act" id="act-national">
+        <p class="act-num">01 / The national turn</p>
+        <h2>The country passed its peak in mid-2023</h2>
+        <p class="say">
+          Each point is the number of overdose deaths in the 12 months ending
+          that month, so seasonal noise is already smoothed out. The total
+          climbed for years, peaked at about 111,000 in the year ending June
+          2023, then fell over the next 35 months to about 65,000 - roughly
+          where it stood in early 2020.
+        </p>
+        <figure>
+          <svg id="chart-national" viewBox="0 0 900 420" aria-label="U.S. 12-month overdose deaths, 2015-2026"></svg>
+          <figcaption>12-month-ending total overdose deaths, United States, Jan 2015 to May 2026.</figcaption>
+        </figure>
+        <p class="note todo"><span class="who">Moose - annotation to finalize</span>
+          Draft: name the policy/drug-supply context for the 2023 turn here, and
+          whether the newest provisional months are likely to revise up.</p>
       </section>
 
-      <section class="viz">
-        <figure class="map-figure">
-          <svg id="map" viewBox="0 0 975 610" aria-label="U.S. choropleth of overdose deaths"></svg>
-          <div id="legend"></div>
+      <!-- Act 2: drugs indexed to own peak (matches static chart 2) -->
+      <section class="act" id="act-drugs">
+        <p class="act-num">02 / Which drugs came down</p>
+        <h2>Fentanyl drove the drop; heroin was already gone</h2>
+        <p class="say">
+          Each drug is drawn as a percent of its own peak (peak = 100), so drugs
+          of very different sizes share one scale. Synthetic opioids (fentanyl)
+          are down about 56% from their 2023 peak; heroin is down about 90% since
+          2017. A single death can involve more than one drug and is counted
+          under each, so the lines cannot be added together.
+        </p>
+        <div class="legend-row" id="drug-legend"></div>
+        <figure>
+          <svg id="chart-drugs" viewBox="0 0 900 420" aria-label="Each drug's deaths as a percent of its own peak"></svg>
+          <figcaption>12-month deaths as a percent of each drug's own peak, United States.</figcaption>
         </figure>
-        <figure class="trend-figure">
-          <figcaption id="trend-title">Click a state to see its trend over time</figcaption>
-          <svg id="trend" viewBox="0 0 520 300" aria-label="Selected-state time series"></svg>
+      </section>
+
+      <!-- Act 3: map + pick-your-state (static chart 3 + THE interaction) -->
+      <section class="act" id="act-map">
+        <p class="act-num">03 / Follow your own state</p>
+        <h2>The decline did not reach everywhere</h2>
+        <p class="say">
+          The map shades each state by how far its 12-month total has fallen from
+          its own peak. 31 of the 50 states and D.C. fell further than the country
+          as a whole; New Mexico (outlined) is the one state still at its peak.
+          Click a state - or pick one below - to trace its death rate per 100,000
+          against the national rate.
+        </p>
+        <div class="geo">
+          <div class="map-col">
+            <figure>
+              <svg id="map" viewBox="0 0 975 610" aria-label="U.S. map shaded by change from each state's peak"></svg>
+            </figure>
+            <figcaption>Darker blue = a larger drop from that state's own peak. Gray = no comparable value.</figcaption>
+          </div>
+          <div class="focus-col">
+            <div class="controls">
+              <label for="state-pick">State
+                <select id="state-pick"></select>
+              </label>
+            </div>
+            <figure>
+              <svg id="chart-state" viewBox="0 0 440 300" aria-label="Selected state death rate vs national rate"></svg>
+            </figure>
+            <p class="focus-readout" id="focus-readout"></p>
+          </div>
+        </div>
+        <p class="note todo"><span class="who">Moose - data note to finalize</span>
+          Draft: states peaked years apart, so each state's "change from peak"
+          uses a different window. Confirm the per-100k denominator wording.</p>
+      </section>
+
+      <!-- Act 4: slope chart (Derek, rough) -->
+      <section class="act" id="act-slope">
+        <p class="act-num">04 / How far each state fell <span class="chart-rough">rough draft</span></p>
+        <h2>Death rates at the peak vs. now</h2>
+        <p class="say">
+          Each line connects a state's death rate per 100,000 at its own peak to
+          its rate now. Most slope down steeply; a few stay flat or tick up. West
+          Virginia had the highest peak rate in the country (87 per 100k) and has
+          roughly halved it; New Mexico is the lone line still at its top.
+        </p>
+        <figure>
+          <svg id="chart-slope" viewBox="0 0 900 460" aria-label="Slope chart of each state's rate at peak vs now"></svg>
+          <figcaption>Deaths per 100,000, each state's peak month vs. the year ending May 2026. Highlighted: five largest drops and the one state at its peak.</figcaption>
+        </figure>
+      </section>
+
+      <!-- Act 5: small multiples (Derek, rough) -->
+      <section class="act" id="act-multiples">
+        <p class="act-num">05 / The biggest drops, and the holdouts <span class="chart-rough">rough draft</span></p>
+        <h2>Five states that fell the most, five that barely moved</h2>
+        <p class="say">
+          Each spark is one state's death rate over time, with its peak marked.
+          The top row is the five largest declines from peak; the bottom row is
+          the five states closest to their peak today.
+        </p>
+        <div class="multiples" id="multiples"></div>
+      </section>
+
+      <!-- Act 6: peak timing (Derek, rough) -->
+      <section class="act" id="act-timing">
+        <p class="act-num">06 / The peaks were years apart <span class="chart-rough">rough draft</span></p>
+        <h2>Every state peaked on its own clock</h2>
+        <p class="say">
+          One dot per state, placed at the month it peaked and its peak rate per
+          100,000. The peaks spread from 2017 to 2026, so a single "post-peak"
+          story hides very different timelines.
+        </p>
+        <figure>
+          <svg id="chart-timing" viewBox="0 0 900 360" aria-label="Each state's peak month and peak rate"></svg>
+          <figcaption>Each state's peak month (x) and death rate per 100,000 at that peak (y).</figcaption>
         </figure>
       </section>
 
       <div id="tooltip" class="tooltip" hidden></div>
 
-      <section class="writeup">
-        <h2>About this visualization</h2>
-        <div id="writeup-body">
-          <h3>Design rationale</h3>
-          <p>We wanted to show two things changing at the same time: where overdose deaths are concentrated and which drugs are behind them, over more than ten years. The CDC reports deaths by state, and geography is half of our question, so we built the chart around a choropleth map. States are colored on one sequential red scale, since the values only run in one direction. For each drug and measure, the color domain stays the same across all 137 of the 12-month periods in the data, so when you drag the time slider, a darker state always means more deaths. States with no reported value are light gray so they don't read as zero.</p>
-          <p>Counts versus rates was the design decision we debated the longest. Our exploratory plots showed that raw death counts mostly follow state population, so the map kept lighting up the biggest states every month. We added a toggle to switch to deaths per 100,000 residents (using each state's 2020 Census population), which compares states more fairly and changes which ones look worst. California is the darkest state on counts, with 8,250 deaths in the 12 months ending May 2026, but per 100,000 it ranks 18th, behind New Mexico (52.0) and D.C. (46.0). We kept raw counts too, since they still answer "how many," and let the reader pick.</p>
-          <p>We kept the interactions to a few. The time slider shows the long rise to about 111,000 deaths in the year ending June 2023 and the recent decline. The drug filter isolates the shift from heroin to synthetic opioids, whose deaths went from about 5,800 at the start of the data to almost 78,000 at the 2023 peak. Clicking a state switches the trend chart to that state, so you get the detail without cluttering the map, and hovering shows the exact value for any state and month. In rate mode the trend chart also draws the U.S. rate as a dashed line, so you can see whether a state is above or below it.</p>
-          <p>We tried a few other ideas and dropped them. In our exploratory charts, a state-by-year heatmap showed every state's history at once but lost the geography, and a top-15 ranking only showed one period, so we kept the map and let the trend chart show one state's full history. Small multiples (one small map per year) would have been unreadable with this many years and states, and the slider shows the same change more directly. A stacked area chart of drugs over time wouldn't work because the categories overlap, so the layers wouldn't add up. We turned the drug breakdown into a filter instead, which also kept the page down to one map and one trend chart.</p>
-          <h3>Development process</h3>
-          <p>We found our dataset together, each spending about an hour searching before we agreed on the CDC's provisional overdose death counts. We worked over Discord and used separate branches with pull requests to merge changes. Derek built the first version of the interactive (the map, time slider, drug filter, and linked trend chart), the exploratory charts, and the data processing script, and later added the counts vs per-100k toggle and the U.S. rate line on the trend chart. Mustafa added the per-100k rates and the data notes caption, reworked three of the exploratory charts, fixed a bug that left the map blank (we were loading an unprojected states file), set the page to open with a state selected, and added missing axis labels to two exploratory charts. Each of us spent roughly 5 to 7 hours on the project, so about 10 to 14 people-hours in total. Hooking up the D3 code took the longest, since it was new to both of us, and we spent a lot of time researching and reading the D3 documentation.</p>
-        </div>
+      <!-- Writeup (rubric: 4+ sentences done, 4+ sentences hardest) -->
+      <section class="writeup" id="writeup">
+        <h2>Prototype write-up</h2>
+
+        <h3>What we have built so far</h3>
+        <p>
+          The data pipeline is done and merged: Mustafa extended the Project 3
+          build script so that for every state and drug we now carry the peak
+          month, the peak value, the latest value, the percent change from peak,
+          and the death rate per 100,000 at both points, all recomputed straight
+          from the CDC file. On top of that data, this page lays out the full
+          "After the Peak" story as six rough charts in reading order - the
+          national turn, the decline split by drug, an uneven map, a peak-vs-now
+          slope chart, small multiples of the biggest drops and the holdouts, and
+          a peak-timing plot. The one interaction that works today is the
+          pick-your-state view: clicking a state on the map, or choosing it from
+          the dropdown, redraws its death rate against the national line and reads
+          out how far it has come down from its own peak. Every number on the page
+          is pulled live from data.json, so the charts stay correct when the CDC
+          data is refreshed, and the original Project 3 explorer still lives at
+          explorer.html for reference.
+        </p>
+
+        <h3>What will be hardest to design, and why</h3>
+        <p>
+          The hardest part will be the scroll-driven transitions: we want the
+          national line, the drug lines, and the map to be one chart that morphs
+          as the reader scrolls, which means binding every mark to a stable key so
+          D3 reuses it across steps instead of redrawing, rather than six charts
+          stacked down the page. Comparing states fairly is the second problem,
+          because they peaked years apart and at very different rates, so we have
+          to decide when to index to each state's own peak and when to show raw
+          deaths per 100,000, and the pick-your-state view has to make that choice
+          legible. Third, Derek's three charts do not yet scale: a slope chart and
+          a small-multiples grid for 51 states get crowded fast, so the real work
+          is deciding what to label, what to fade, and what to drop without losing
+          the outliers that carry the story. Finally, the small states (D.C.,
+          Rhode Island, Delaware) nearly disappear on a geographic map, so we may
+          move to Mustafa's tile-grid version, and we still have to write tight
+          per-step annotations that explain each turn without burying the charts
+          in text.
+        </p>
       </section>
+
+      <footer>
+        <p>
+          Source: CDC NCHS, VSRR Provisional Drug Overdose Death Counts
+          (12-month-ending counts, provisional, through May 2026). New York
+          includes New York City; rates use each state's 2020 Census population.
+          Counts are the reported provisional values, not the CDC's modeled
+          predicted counts, so the most recent months may revise upward.
+        </p>
+        <p>
+          <a href="explorer.html">See the original Project 3 explorer &rarr;</a>
+          &nbsp;&middot;&nbsp;
+          <a href="https://github.com/mhayeri/dsc209r-final">Source on GitHub</a>
+        </p>
+      </footer>
     </main>
 
-    <script type="module" src="main.js"></script>
+    <script type="module" src="story.js"></script>
   </body>
 </html>
